@@ -3,34 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <title>下單計算機</title>
+  <style>
+    body { font-family: Arial; max-width: 600px; margin: auto; }
+    label { display: block; margin-top: 10px; }
+    input, select, button { width: 100%; padding: 6px; margin-top: 4px; }
+    pre { background: #f4f4f4; padding: 10px; margin-top: 15px; }
+  </style>
 </head>
 <body>
 
-<h1>下單計算機</h1>
-<button id="btn">測試 API</button>
+<h2>下單計算機</h2>
+
+<label>方向</label>
+<select id="direction">
+  <option>Buy</option>
+  <option>Sell</option>
+  <option>Buy Stop</option>
+  <option>Sell Stop</option>
+</select>
+
+<label>本金</label>
+<input id="capital" type="number" value="50000">
+
+<label>風險比例 (%)</label>
+<input id="risk" type="number" value="1">
+
+<label>盈虧比</label>
+<input id="rr" type="number" value="1.8">
+
+<label>進場價</label>
+<input id="entry" type="number" value="4347.28">
+
+<label>止損價</label>
+<input id="stop" type="number" value="4333.5">
+
+<button onclick="calculate()">計算</button>
+
 <pre id="result"></pre>
 
 <script>
-document.getElementById("btn").onclick = async () => {
-  try {
-    const res = await fetch("https://trade-calculator-api.onrender.com/calculate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        direction: "Buy Stop",
-        capital: 50000,
-        risk_pct: 1,
-        entry: 4347.28,
-        stop: 4333.5
-      })
-    });
-    const data = await res.json();
-    document.getElementById("result").textContent =
-      JSON.stringify(data, null, 2);
-  } catch (e) {
-    document.getElementById("result").textContent = e.toString();
-  }
-};
+async function calculate() {
+  const data = {
+    direction: direction.value,
+    capital: Number(capital.value),
+    risk_pct: Number(risk.value),
+    rr: Number(rr.value),
+    entry: Number(entry.value),
+    stop: Number(stop.value)
+  };
+
+  const res = await fetch("https://trade-calculator-api.onrender.com/calculate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const r = await res.json();
+
+  result.textContent =
+`方向：${r.direction}
+進場：${r.entry}
+止損：${r.stop}
+止盈：${r.take_profit}
+0.01手數虧損：${r.loss_per_001}
+0.01手數獲利：${r.profit_per_001}
+下單手數：${r.lot}
+實際虧損：${r.actual_loss}
+實際獲利：${r.actual_profit}`;
+}
 </script>
 
 </body>
