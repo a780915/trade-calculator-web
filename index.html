@@ -69,11 +69,11 @@ const r = await res.json();
   result.textContent =
 `方向：${r.direction}
 進場：${r.entry}
-止損：${r.stop_loss}
+止損：${r.stop}
 止盈：${r.take_profit}
 0.01手數虧損：${r.loss_per_001 ?? "N/A"}
 0.01手數獲利：${r.profit_per_001 ?? "N/A"}
-下單手數：${r.lot_size}
+下單手數：${r.lot}
 實際虧損：${r.actual_loss}
 實際獲利：${r.actual_profit}`;
 }
